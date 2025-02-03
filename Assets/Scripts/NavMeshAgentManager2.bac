@@ -1,0 +1,117 @@
+using UnityEngine;
+using UnityEngine.AI;
+using System.IO;
+using System.Text.RegularExpressions;
+
+public class NavMeshAgentsManager : MonoBehaviour
+{
+    //public NavMeshAgent[] agents;  // Assign up to 60 NavMeshAgents in the Inspector
+    public GameObject agentPrefab;
+    public GameObject goalPrefab;  // Assign a goal object prefab in the Inspector
+    public string coordinatesFilePath = "Assets/coordinates.txt"; // Path to your coordinates file
+    public float updateInterval = 0.2f;  // Update every 200ms
+
+    private GameObject[] goals;  // Goal objects for each agent
+    private NavMeshAgent[] agents;   // Goal objects for each agent
+    private float timeSinceLastUpdate = 0f;
+    private int frameIndex = 1; // Start from frame 1
+    public int agentCount = 60;
+
+    void Start()
+    {
+        
+            if (agentPrefab == null || goalPrefab == null)
+            {
+                Debug.LogError("Please assign the Agent Prefab and Goal Prefab in the Inspector.");
+                return;
+            }
+        
+
+        agents = new NavMeshAgent[agentCount];
+        goals = new GameObject[agentCount];
+        InitiateGoalsAndAgents();
+        LoadCoordinatesAndAssignGoals(frameIndex);
+    }
+
+    void Update()
+    {
+        timeSinceLastUpdate += Time.deltaTime;
+
+        if (timeSinceLastUpdate >= updateInterval)
+        {
+            frameIndex++; // Increment to the next frame
+            LoadCoordinatesAndAssignGoals(frameIndex);
+            timeSinceLastUpdate = 0f;
+        }
+    }
+
+  void InitiateGoalsAndAgents()
+    {
+        for (int i = 0; i < agentCount; i++)
+        {
+            agents[i] = Instantiate(agentPrefab, Vector3.zero, Quaternion.identity).GetComponent<NavMeshAgent>();
+
+
+            agents[i].name = "Agent-" + (i + 1); // Assign a name for clarity
+
+            // Instantiate goal objects for each agent
+            goals[i] = Instantiate(goalPrefab, Vector3.zero, Quaternion.identity);
+            goals[i].name = "Goal-" + (i + 1);
+        }
+    }
+
+
+    void LoadCoordinatesAndAssignGoals(int frameIndex)
+    {
+        if (!File.Exists(coordinatesFilePath))
+        {
+            Debug.LogError("Coordinates file not found at: " + coordinatesFilePath);
+            return;
+        }
+
+        string[] lines = File.ReadAllLines(coordinatesFilePath);
+        string frameHeader = $"*** {frameIndex} ***";
+        bool isFrameFound = false;
+
+        foreach (string line in lines)
+        {
+            // Find the header for the current frame
+            if (line.Trim() == frameHeader)
+            {
+                isFrameFound = true;
+                continue;
+            }
+
+            // Parse coordinates for each agent after finding the frame header
+            if (isFrameFound)
+            {
+                for (int i = 0; i < agents.Length; i++)
+                {
+                    string agentId = $"agent-{i + 1}"; // agent-1, agent-2, ..., agent-60
+                    Match match = Regex.Match(line, $@"{agentId}\(([-+]?[0-9]*\.?[0-9]+),([-+]?[0-9]*\.?[0-9]+)\)");
+                    if (match.Success)
+                    {
+                        float x = float.Parse(match.Groups[1].Value);
+                        float z = float.Parse(match.Groups[2].Value); // Y in file becomes Z in Unity
+                        Vector3 goalPosition = new Vector3(x/20, 0f, z/20); // Assuming a flat plane at Y = 0
+                        //Set the coordinates of the agents to the initial one of the goals
+                        if (frameIndex==1)
+                        {
+                           // Debug.Log(goalPosition);
+                            agents[i].transform.position = goalPosition;
+                        }
+                        goals[i].transform.position = goalPosition;
+
+                        if (agents[i] != null)
+                        {
+                            agents[i].SetDestination(goalPosition);
+                        }
+                    }
+                }
+                return;
+            }
+        }
+
+        Debug.LogWarning($"Frame {frameIndex} not found in coordinates file.");
+    }
+}
