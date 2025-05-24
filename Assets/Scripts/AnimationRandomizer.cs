@@ -17,7 +17,7 @@ public class AnimationRandomizer : MonoBehaviour
         SetRandomRunningAnimation();
         SetRandomFallingAnimation();
         SetRandomIDLEAnimation();
-        //Debug
+        //Debug until the 2D simulator is implemented to start the animations of
         animator.SetTrigger("StandsUp");
 
     }

@@ -17,8 +17,7 @@ public class NavMeshAgentsManager : MonoBehaviour
     public int agentCount = 60; //Agent amount to be spawned
     private Vector3[] goalsPositionBuffer; //Creates a buffer array to store all possible positions of the goals
     private Vector3[] agentsPositionBuffer; //Creates a buffer array to store all possible positions of the agents
-    //Debug
-
+    public float collisionThreshold = 1.0f; // Set this to your desired collision distance
 
     void Start()
     {
@@ -45,12 +44,11 @@ public class NavMeshAgentsManager : MonoBehaviour
             LoadCoordinatesAndAssignGoals(frameIndex);
             timeSinceLastUpdate = 0f;
         }
-        //Every frame to be independent of 2D Sim
+        //Call every frame to be independent of 2d sim
         CheckNavMeshAgentProximity();
+        CheckCeilingCollision();
     }
-
-  
-
+    //Initialize the agents and goals
     void InitiateGoalsAndAgents()
     {
         for (int i = 0; i < agentCount; i++)
@@ -67,7 +65,7 @@ public class NavMeshAgentsManager : MonoBehaviour
             agents[i] = Instantiate(agentPrefab, spawnPosition, Quaternion.identity).GetComponent<NavMeshAgent>();
             agents[i].name = "Agent-" + (i + 1);
 
-            // Create goal objects for each agent (start at the same spawn position)
+            // Create goal objects for each agent (start at the same spawn position as the agents initially)
             goals[i] = Instantiate(goalPrefab, spawnPosition, Quaternion.identity);
             goals[i].name = "Goal-" + (i + 1);
         }
@@ -115,11 +113,11 @@ public class NavMeshAgentsManager : MonoBehaviour
                     string agentId = $"agent-{i + 1}";
                     Match match = Regex.Match(line, $@"{agentId}\(([-+]?[0-9]*\.?[0-9]+),([-+]?[0-9]*\.?[0-9]+)\)");
                     //End of Part written by ChatGPT
-                    if (match.Success && agents[i].GetComponent<Animator>().GetBool("Collision") == false)
+                    if (match.Success && !agents[i].GetComponent<AnimationController>().agentCollision && !agents[i].GetComponent<AnimationController>().agentHitByCeiling)
                     {
                         float x = float.Parse(match.Groups[1].Value);
                         float z = float.Parse(match.Groups[2].Value);
-                        Vector3 rawGoalPosition = new Vector3(x / 200, 0f, z / 200);
+                        Vector3 rawGoalPosition = new Vector3(x / 200, 0f, z / 200); //Math added because of scale
 
                         // Use NavMesh.SamplePosition to find the nearest point on the NavMesh
                         Vector3 goalPosition = AdjustPositionToNavMesh(rawGoalPosition);
@@ -134,17 +132,26 @@ public class NavMeshAgentsManager : MonoBehaviour
                         {
                             agents[i].SetDestination(goalPosition);
                         }
+                        //Add the small posibility of an agent getting paniced, and preventing it from entering again if they are already paniced
+                        if (Random.Range(0f, 1000f) > 999f && agents[i].GetComponent<AnimationController>().agentIsPaniced == false)
+                        {
+                            agents[i].GetComponent<AnimationController>().ChangeAnimation("Panic", i);
+                            Debug.Log($"Agent {i} is paniced");
+                            //Make agent move faster when paniced
+                            agents[i].speed = agents[i].speed*1.5f;
+                        }
+                        //Send data to 2D simulator if the ID of the Animation Controller currentAgentID int is not -1
                     }
-                    else if (match.Success && agents[i].GetComponent<Animator>().GetBool("Collision") == true)
+                    
+                    //Stop the agent from moving if a collision of agents or the ceiling is detected
+                    else if (match.Success && (agents[i].GetComponent<AnimationController>().agentCollision || agents[i].GetComponent<AnimationController>().agentHitByCeiling))
                     {
-                        // Debug.Log("Za Warudo");
                         //agents[i].ResetPath();
                         agents[i].velocity = Vector3.zero;
                         // agents[i].enabled = false;
                         agents[i].isStopped = true;
-                       // agents[i].transform.position = agentsPositionBuffer[i];
+                        //Only reset the goal since the agent is already stopped
                         goals[i].transform.position = goalsPositionBuffer[i];
-                        
                     }
                 }
                 return;
@@ -158,7 +165,7 @@ public class NavMeshAgentsManager : MonoBehaviour
     {
         NavMeshHit hit;
 
-        // Perform a downward raycast to find the closest NavMesh point within a range
+        // Perform a downward raycast to find the closest NavMesh point within the range
         if (NavMesh.SamplePosition(position, out hit, 10.0f, NavMesh.AllAreas))
         {
             return hit.position; // Return the closest point on the NavMesh
@@ -171,72 +178,76 @@ public class NavMeshAgentsManager : MonoBehaviour
     }
 
     //Check for collision between NavMeshAgents
-    //Maybe move this to the Agent itself ?
     void CheckNavMeshAgentProximity()
     {
         for (int i = 0; i < agents.Length; i++)
         {
             if (agents[i] == null) continue;
-
             Vector3 positionA = agents[i].transform.position;
-
             for (int j = i + 1; j < agents.Length; j++)
             {
                 if (agents[j] == null) continue;
-
                 Vector3 positionB = agents[j].transform.position;
-                //AnimationController animationController = agents[i].GetComponent<AnimationController>();
-
                 // Calculate distance between agents
                 float distance = Vector3.Distance(positionA, positionB);
-
-            //    if (distance < 0.5f && agents[i].GetComponent<Animator>().GetBool("Collision") == false)
-                    if (Input.GetKeyDown("space"))
-                    {
-                    //  Debug.Log($"Agents {agents[i].name} and {agents[j].name} are colliding. Distance: {distance}");
-                    //Call animation change function on the specified object
-                    agents[i].GetComponent<AnimationController>().ChangeAnimation("Collision");
-                    //Log collision position
-                    //Change to see if both agents fall
+                if (distance <= collisionThreshold)
+                {
+                    Debug.Log($"Agents {agents[i].name} and {agents[j].name} are colliding. Distance: {distance}");
+                    // Call animation change on both agents
+                    var animA = agents[i].GetComponent<AnimationController>();
+                    var animB = agents[j].GetComponent<AnimationController>();
+                    if (animA != null) animA.ChangeAnimation("Collision", i);
+                    if (animB != null) animB.ChangeAnimation("Collision", j);
+                    // Store positions in the buffer
                     agentsPositionBuffer[i] = agents[i].transform.position;
-                    goalsPositionBuffer[i] = goals[i].transform.position; 
-                    
-                    //Send signal to 2D simulator to stop sending and moving the character and send position of collision
-
+                    agentsPositionBuffer[j] = agents[j].transform.position;
+                    goalsPositionBuffer[i] = goals[i].transform.position;
+                    goalsPositionBuffer[j] = goals[j].transform.position;
+                    // TODO: Send signal to 2D simulator to stop sending/moving characte and send position of collision + send collision buffer
                 }
             }
         }
     }
-    //Todo check for falling ceiling
-    /*   void CheckCeilingCollision()
-       {
-           for (int i = 0; i < agents.Length; i++)
-           {
-               if (agents[i] == null) continue;
 
-               Vector3 positionA = agents[i].transform.position;
+    //Check for ceiling collision only with the object tagged as "Debris" and only if the object moves downward while it hits the agent
+    void CheckCeilingCollision()
+    {
+        GameObject ceiling = GameObject.FindWithTag("Debris");
+        if (ceiling != null)
+        {
+            CapsuleCollider ceilingCollider = ceiling.GetComponent<CapsuleCollider>();
+            if (ceiling.GetComponent<FallingRoof>().isFalling == false)
+            {
+                return;
+            }
+            if (ceilingCollider == null)
+            {
+                Debug.LogWarning("Ceiling object does not have a CapsuleCollider.");
+                return;
+            }
+            for (int i = 0; i < agents.Length; i++)
+            {
+                if (agents[i] == null) continue;
 
-               for (int j = i + 1; j < agents.Length; j++)
-               {
-                   if (agents[j] == null) continue;
+                Vector3 agentPos = agents[i].transform.position;
 
-                   Vector3 positionB = agents[j].transform.position;
+                // Get the closest point on the collider to the agent's world position
+                Vector3 closestPoint = ceilingCollider.ClosestPoint(agentPos);
+                float distanceToCollider = Vector3.Distance(agentPos, closestPoint);
 
-                   // Calculate distance between agents
-                   float distance = Vector3.Distance(positionA, positionB);
+                if (distanceToCollider < 0.1f && agents[i].GetComponent<AnimationController>().agentHitByCeiling == false)
+                {
+                    agents[i].GetComponent<AnimationController>().ChangeAnimation("HitByCeiling", i);
+                    agentsPositionBuffer[i] = agents[i].transform.position;
+                    goalsPositionBuffer[i] = goals[i].transform.position;
+                    Debug.Log($"Agent {i} is hit by ceiling");
+                }
+            }
+        }
+    }
 
-                   if (distance < 0.1f)
-                   {
-                       Debug.Log($"Agents {agents[i].name} and {agents[j].name} are colliding. Distance: {distance}");
-                       //Call animation change function on the specified object
-                       AnimationController animationController = agents[i].GetComponent<AnimationController>();
-                       animationController.ChangeAnimation("hitByCeiling");
 
-                   }
-               }
-           }
-       }
-       //Todo Check for jump over chair
+/*       //Todo Check for jump over chair
        void CheckJumpCondition()
        {
            for (int i = 0; i < agents.Length; i++)
