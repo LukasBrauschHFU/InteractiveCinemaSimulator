@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\assets\\scripts\\fallingroof.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\assets\\scripts\\animationrandomizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\animationrandomizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|c:\\users\\lukas\\documents\\mariosmw3d\\interactivesimulator\\assets\\scripts\\fallingroof.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\fallingroof.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|c:\\users\\lukas\\documents\\mariosmw3d\\interactivesimulator\\assets\\coordinates.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\assets\\coordinates.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|solutionrelative:assets\\coordinates.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\assets\\scripts\\animationrandomizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\animationrandomizer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7FBD0B37-671C-B3C3-AD8D-15E52451A4C8}|Assembly-CSharp.csproj|C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\assets\\scripts\\navmeshagentmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -30,11 +30,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "coordinates.txt",
               "DocumentMoniker": "C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\Assets\\coordinates.txt",
               "RelativeDocumentMoniker": "Assets\\coordinates.txt",
@@ -42,12 +42,11 @@
               "RelativeToolTip": "Assets\\coordinates.txt",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2025-05-23T08:23:58.271Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-23T08:23:58.271Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "FallingRoof.cs",
               "DocumentMoniker": "C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\Assets\\Scripts\\FallingRoof.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\FallingRoof.cs",
@@ -68,8 +67,7 @@
               "RelativeToolTip": "Assets\\Scripts\\NavMeshAgentManager.cs",
               "ViewState": "AgIAANwAAAAAAAAAAAAAAOkAAABWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-21T18:00:54.787Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-21T18:00:54.787Z"
             },
             {
               "$type": "Document",
@@ -81,18 +79,17 @@
               "RelativeToolTip": "Assets\\Scripts\\AnimationController.cs",
               "ViewState": "AgIAABUAAAAAAAAAAAAowAwAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-21T17:35:58.855Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-21T17:35:58.855Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "AnimationRandomizer.cs",
               "DocumentMoniker": "C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\Assets\\Scripts\\AnimationRandomizer.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\AnimationRandomizer.cs",
               "ToolTip": "C:\\Users\\Lukas\\Documents\\MarioSMW3D\\InteractiveSimulator\\Assets\\Scripts\\AnimationRandomizer.cs",
               "RelativeToolTip": "Assets\\Scripts\\AnimationRandomizer.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAqwCQAAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwDQAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-21T17:34:41.046Z",
               "EditorCaption": ""
