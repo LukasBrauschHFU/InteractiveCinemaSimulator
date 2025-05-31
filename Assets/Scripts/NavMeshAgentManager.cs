@@ -136,7 +136,7 @@ public class NavMeshAgentsManager : MonoBehaviour
                         if (Random.Range(0f, 1000f) > 999f && agents[i].GetComponent<AnimationController>().agentIsPaniced == false)
                         {
                             agents[i].GetComponent<AnimationController>().ChangeAnimation("Panic", i);
-                            Debug.Log($"Agent {i} is paniced");
+                            Debug.Log($"Agent {i+1} is paniced");
                             //Make agent move faster when paniced
                             agents[i].speed = agents[i].speed*1.5f;
                         }

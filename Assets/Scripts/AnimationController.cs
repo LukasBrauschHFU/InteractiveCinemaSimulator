@@ -35,6 +35,7 @@ public class AnimationController : MonoBehaviour
                 currentAgentID = agentID;
                 break;
             case "Panic":
+                animator.SetTrigger("IsPaniced");
                 agentIsPaniced = true;
                 currentAgentID = agentID;
                 break;
